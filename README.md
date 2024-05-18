@@ -30,8 +30,17 @@ cmake --build . -j$(nproc)
 sudo make install
 ```
 
+### Test frontend 
+    
+```sh
+cd frontend
+npm install
+npm start
+```
+
 ### Other dependencies
 - gcc / g++ / clang
 - make / cmake
 - unzip
 - wget
+- npm
