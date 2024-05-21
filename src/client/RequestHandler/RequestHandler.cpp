@@ -25,12 +25,12 @@ void RequestHandler::SendRequest(Payload payload)
 
     send(m_socket, bytes.data, bytes.size, 0);
 
-    printf("Sent %d bytes\n", bytes.size);
+    printf("Sent %zu bytes\n", bytes.size);
 
     char* received = (char*)malloc(MAX_PAYLOAD);
     size_t received_size = read(m_socket, received, MAX_PAYLOAD);
 
-    printf("Received %d bytes\n", received_size);
+    printf("Received %zu bytes\n", received_size);
 
     Payload received_payload = BytesToPayload({ received, received_size});
 
