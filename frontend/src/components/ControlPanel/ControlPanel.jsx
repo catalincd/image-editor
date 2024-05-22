@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ControlPanel.css';
 
-function ControlPanel({ type }) {
+function ControlPanel({ type, handleCrop }) {
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
   const [brightness, setBrightness] = useState(100);
@@ -52,7 +52,7 @@ function ControlPanel({ type }) {
       case 'crop':
         return (
           <div className="crop-controls">
-            <button onClick={() => console.log(`Crop image`)}>Crop</button>
+            <button onClick={handleCrop}>Crop</button>
           </div>
         );
       default:
