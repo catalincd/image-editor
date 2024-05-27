@@ -13,12 +13,12 @@
 #include <vector>
 #include <getopt.h> 
 #include "../../utils/types.h"      
-#include "../ImageHandler/ImageHandler.h"
+#include "../../client/ImageHandler/ImageHandler.h"
 #include "../../utils/types.h" 
 #include "../../utils/OSUtils.h" 
 
 
-struct Payload {
+struct PayloadServer {
     std::string ip;
     int port;
     int threads;
@@ -32,7 +32,7 @@ private:
     
 public:
     static ArgumentParserServer& Instance();
-    Payload HandleArguments(int argc, char** argv);
+    PayloadServer HandleArguments(int argc, char** argv);
     const std::string& GetOutputFile() const;
     static struct option long_options[];
 };

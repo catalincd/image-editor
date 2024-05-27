@@ -15,17 +15,17 @@ ArgumentParserServer& ArgumentParserServer::Instance() {
 }
 
 
-Payload ArgumentParserServer::HandleArguments(int argc, char** argv) {
+PayloadServer ArgumentParserServer::HandleArguments(int argc, char** argv) {
     int argument = 0;
     int option_index = 0;
     outfile = (char*)malloc(255); // free this
 
-    Payload _payload;
+    PayloadServer _payload;
 
     _payload.ip = "127.0.0.1";  //  IP
-    _payload.port = 8080;       //  port
+    _payload.port = 9090;       //  port
     _payload.threads = 4;       // number of threads
-    _payload.max_clients = 10;  //  max clients
+    _payload.max_clients = 100;  //  max clients
 
 
     while ((argument = getopt_long(argc, argv, "i:p:t:m:", long_options, &option_index)) != -1) {

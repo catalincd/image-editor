@@ -8,13 +8,13 @@
 #include <netinet/in.h>
 
 #include "SocketHandler/SocketHandler.h"
-#include "ArgParser.h"
+#include "ArgumentParser/ArgParser.h"
 
 int main(int argc, char** argv)
 {
     ArgumentParserServer& parser = ArgumentParserServer::Instance();
 
-    Payload config = parser.HandleArguments(argc, argv);
+    PayloadServer config = parser.HandleArguments(argc, argv);
 
 
     std::cout << "Server:\n"
