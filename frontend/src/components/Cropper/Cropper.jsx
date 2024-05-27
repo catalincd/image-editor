@@ -4,10 +4,10 @@ import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { BsFillCloudDownloadFill } from 'react-icons/bs';
 import { AiOutlineRotateRight } from 'react-icons/ai';
-
 import { canvasPreview } from './cropImage';
+import { processImage } from '../../api';
 
-export default function Cropper({ url }) {
+export default function Cropper({ url, onCancelCrop }) { // Added onCancelCrop prop for cancel button
   const imgRef = useRef(null);
   const [crop, setCrop] = useState(null);
   const [rotation, setRotation] = useState(0);
@@ -35,6 +35,27 @@ export default function Cropper({ url }) {
 
   const download = async () => {
     await canvasPreview(imgRef.current, completedCrop, scale, rotation);
+    // if (!completedCrop || !imgRef.current) {
+    //   return;
+    // }
+
+    // const croppedImageBlob = await canvasPreview(imgRef.current, completedCrop, scale, rotation);
+
+    // // Create a payload for the backend
+    // const payload = {
+    //   target: 'crop',
+    //   resize: false,
+    //   recontrast: false,
+    //   rebright: false,
+    //   image: croppedImageBlob
+    // };
+
+    // try {
+    //   const result = await processImage(payload);
+    //   console.log("Image processed successfully:", result);
+    // } catch (error) {
+    //   console.error("Error processing image:", error);
+    // }
   };
 
   const onImageLoad = (e) => {
@@ -48,7 +69,6 @@ export default function Cropper({ url }) {
       unit: 'px'
     });
   };
-
 
   return (
     <div className={'outerDiv'}>
@@ -100,6 +120,7 @@ export default function Cropper({ url }) {
       <div className={'controlsIcon'}>
         <BsFillCloudDownloadFill className={'icon'} onClick={download} />
         <AiOutlineRotateRight className={'icon'} onClick={rotateRight} />
+        <button onClick={onCancelCrop} className="btn btn-primary">Cancel Crop</button>
       </div>
     </div>
   );
