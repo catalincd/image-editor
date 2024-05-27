@@ -39,9 +39,9 @@ void SocketHandler::SetupConnection(int port, int clients)
         Error("ERROR on binding");
 
     listen(m_socket, m_clients);
-
-    printf("Started listening on port %d\n", m_port);
-    printf("Max clients %d\n", m_clients);
+    
+    //printf("Started listening on port %d\n", m_port);
+    //printf("Max clients %d\n", m_clients);
 
     ThreadHandler thr_pool(thread::hardware_concurrency());
 
