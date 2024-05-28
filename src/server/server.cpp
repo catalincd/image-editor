@@ -9,6 +9,7 @@
 
 #include "SocketHandler/SocketHandler.h"
 #include "ArgumentParser/ArgParser.h"
+#include "WebServer/WebServer.h"
 
 int main(int argc, char** argv)
 {
@@ -16,6 +17,7 @@ int main(int argc, char** argv)
 
     PayloadServer config = parser.HandleArguments(argc, argv);
 
+    WebServer webServer = WebServer();
 
     std::cout << "Server:\n"
               << "IP: " << config.ip << "\n"
@@ -24,6 +26,8 @@ int main(int argc, char** argv)
               << "Max Clients: " << config.max_clients << std::endl;
 
     SocketHandler::Instance().SetupConnection();
+
+    webServer.Join();
 
     return 0;
 }

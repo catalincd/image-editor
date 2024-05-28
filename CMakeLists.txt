@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(YourProjectName)
 
 find_package(OpenCV REQUIRED)
+find_package(Crow CONFIG REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -17,7 +18,7 @@ file(GLOB server_src
 
 add_executable(server ${server_src})
 
-target_link_libraries(server ${OpenCV_LIBS})
+target_link_libraries(server ${OpenCV_LIBS} Crow::Crow)
 
 # Client
 file(GLOB client_src
