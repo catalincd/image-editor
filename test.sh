@@ -2,15 +2,20 @@
 
 clear
 
-echo "" > out.txt 
-echo "" > err.txt
+mkdir -p poze
+rm -rf poze/*
 
-rm -rf pics/*
-
-for i in {1..10}
+for i in {1..100}
 do
-    ./build/client --image ./build/car.jpeg --resize 500x500 --output pics/new$i.jpeg >> out.txt 2>> err.txt &
-    sleep 0.1
+    cp car.jpeg poze/car$i.jpeg
+done
+
+mkdir -p poze_jmk
+rm -rf poze_jmk/*
+
+for i in {1..99}
+do
+    ./build/client --image poze/car$i.jpeg --resize 500x500 --output poze_jmk/new$i.jpeg &
 done
 
 exit 0

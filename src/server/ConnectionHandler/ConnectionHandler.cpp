@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <poll.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -33,8 +35,11 @@ extern size_t MAX_PAYLOAD;
 
 void ConnectionHandler::HandleConnection(int socket)
 {
+    // set_non_blocking(socket);
+
     char *buffer = (char *)malloc(MAX_PAYLOAD);
     size_t buffer_size = read(socket, buffer, MAX_PAYLOAD);
+
     if (buffer_size < 0)
         Error("ERROR reading from socket");
 
@@ -51,10 +56,25 @@ void ConnectionHandler::HandleConnection(int socket)
     // TODO: HANDLE BIZONIC ERRORS
     printf("Server: Edited image %d bytes\n", payload.image.size);
 
-    size_t sent_size = write(socket, response_payload.data, response_payload.size);
-    if (sent_size < 0)
-        Error("ERROR writing to socket");
-    printf("Server: Sent %d bytes\n", sent_size);
+    size_t total_sent = 0;
+    while (total_sent < buffer_size)
+    {
+        size_t sent_size = send(socket, response_payload.data + total_sent, response_payload.size - total_sent, MSG_DONTWAIT);
+        if (sent_size < 0)
+        {
+            if (errno != EAGAIN && errno != EWOULDBLOCK)
+            {
+                Error("ERROR write");
+            }
+            break; // nothing left to send
+        }
+        else
+        {
+            total_sent += sent_size;
+        }
+        printf("Server: Sent %d bytes\n", sent_size);
+    }
 
+    free(buffer);
     close(socket);
 }
