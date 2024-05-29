@@ -17,3 +17,9 @@ vector2 str_to_v2(const char*);
 
 Payload BytesToPayload(Buffer);
 Buffer PayloadToBytes(Payload);
+
+Packet BytesToPacket(Buffer);
+Buffer PacketToBytes(Packet);
+
+Ack BytesToAck(Buffer);
+Buffer AckToBytes(Ack);

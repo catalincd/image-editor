@@ -10,6 +10,21 @@ struct Buffer {         // maybe add on destroy (eventually)
     size_t size;
 };
 
+
+struct Packet { 
+    int packet_num;
+    int total_num;
+    int session;
+    int total_data;
+    Buffer data;
+};
+
+struct Ack {
+    int packet_num;
+    int total_num;
+    int session;
+};
+
 // TO DO: modify this, add more stuff to it or something
 struct Payload {
     char target[255];

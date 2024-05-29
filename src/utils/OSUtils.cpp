@@ -73,3 +73,50 @@ Payload BytesToPayload(Buffer buffer)
 
     return payload;
 }
+
+
+extern size_t MAX_PACKET;
+
+Buffer PacketToBytes(Packet packet) 
+{
+    size_t struct_size = sizeof(Packet);
+    size_t full_size = struct_size + packet.data.size;
+    
+    std::cout<<"PACKET TO BYTES: "<<packet.data.size<<"B /"<<full_size<<"B\n";
+
+    char* buffer = (char*)malloc(full_size);
+    std::memcpy(buffer, &packet, struct_size);
+    std::memcpy(buffer + struct_size, packet.data.data, packet.data.size);
+
+    return { buffer, full_size };
+}
+
+Packet BytesToPacket(Buffer buffer)
+{
+    size_t struct_size = sizeof(Packet);
+    Packet packet;
+    std::memcpy(&packet, buffer.data, struct_size);
+
+    size_t data_size = buffer.size - struct_size;
+    char* data = buffer.data + struct_size;
+    packet.data = {data, data_size};
+
+    return packet;
+}
+
+
+Buffer AckToBytes(Ack ack)
+{
+    size_t struct_size = sizeof(Ack);
+    char* buffer = (char*)malloc(struct_size);
+    std::memcpy(buffer, &ack, struct_size);
+    return { buffer, struct_size };
+}
+
+Ack BytesToAck(Buffer buffer)
+{
+    size_t struct_size = sizeof(Ack);
+    Ack ack;
+    std::memcpy(&ack, buffer.data, struct_size);
+    return ack;
+}

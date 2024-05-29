@@ -24,40 +24,35 @@ void RequestHandler::SendRequest(Payload payload)
 
     printf("Connected to %s:%d\n", "127.0.0.1", 9090);
 
-    send(m_socket, bytes.data, bytes.size, 0);
+    // send(m_socket, bytes.data, bytes.size, 0);
+    PacketSender packetSender(m_socket, bytes);
 
-    printf("Sent %zu bytes\n", bytes.size);
-
-    char *received = (char *)malloc(MAX_PAYLOAD);
-    size_t total_recieved = 0;
-    ssize_t received_size;
-    while (true)
+    if(packetSender.Send())
     {
-        received_size = read(m_socket, received + total_recieved, MAX_PAYLOAD - total_recieved);
-        if (received_size < 0)
-        {
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
-            {
-                continue;
-            }
-            else
-            {
-                Error("ERROR reading");
-                close(m_socket);
-            }
-        }
-        else if (received_size == 0)
-        {
-            break;
-        }
-        else
-        {
-            total_recieved += received_size;
-        }
+        printf("Sent %zu bytes\n", bytes.size);
     }
-    printf("Recived %ld", total_recieved);
+    else
+    {
+        printf("Failed packet sender\n");
+        return;
+    }
 
-    Payload received_payload = BytesToPayload({received, total_recieved});
+
+    PacketReceiver packetReceiver(m_socket);
+    Buffer received_buffer;
+
+    if(packetReceiver.Receive())
+    {
+        received_buffer = packetReceiver.GetBuffer();
+        printf("Received %d bytes\n", received_buffer.size);
+    }
+    else
+    {
+        printf("Failed receiver");
+        return;
+    }
+
+    Payload received_payload = BytesToPayload(received_buffer);
 
     ImageHandler::Instance().Write(received_payload.target, received_payload.image);
     printf("Written image\n");

@@ -37,7 +37,7 @@ void WebServer::Start()
 
     const char *url = "http://0.0.0.0:18080/static/index.html";
     std::string command = "xdg-open " + std::string(url);
-    system(command.c_str());
+    //system(command.c_str());
 
     CrowLogger logger;
     crow::logger::setHandler(&logger);

@@ -12,6 +12,9 @@
 #include "../ImageEditor/ImageEditor.h"
 #include "../../utils/OSUtils.h"
 
+#include "../../utils/packets/PacketReceiver.h"
+#include "../../utils/packets/PacketSender.h"
+
 void SwapBytes(void *pv, size_t n)
 {
     char *p = (char *)pv;
@@ -35,44 +38,38 @@ extern size_t MAX_PAYLOAD;
 
 void ConnectionHandler::HandleConnection(int socket)
 {
-    // set_non_blocking(socket);
+    PacketReceiver packetReceiver(socket);
+    Buffer received_buffer;
 
-    char *buffer = (char *)malloc(MAX_PAYLOAD);
-    size_t buffer_size = read(socket, buffer, MAX_PAYLOAD);
-
-    if (buffer_size < 0)
-        Error("ERROR reading from socket");
-
-    printf("Server: Received %d bytes\n", buffer_size);
-    // printf("Str: \"%.16s\"\n", buffer);
-    // printf("First 16: \"%.16hx\"\n", buffer);
-    // SwapBytes(buffer, buffer_size);
-    // printf("Swapped 16: \"%.16hx\"\n", buffer);
-
-    //
-    Payload payload = BytesToPayload({buffer, buffer_size});
+    if(packetReceiver.Receive())
+    {
+        received_buffer = packetReceiver.GetBuffer();
+        printf("Server: Received %d bytes\n", received_buffer.size);
+    }
+    else
+    {
+        printf("Server: Failed receiver");
+        return;
+    }
+    
+    Payload payload = BytesToPayload(received_buffer);
     payload.image = ImageEditor::Instance().Edit(payload); // delete old image so we don't leak mem? nah overrated
     Buffer response_payload = PayloadToBytes(payload);
     // TODO: HANDLE BIZONIC ERRORS
     printf("Server: Edited image %d bytes\n", payload.image.size);
 
-    size_t total_sent = 0;
-    while (total_sent < buffer_size)
+
+
+    PacketSender packetSender(socket, {response_payload.data, response_payload.size});
+
+    if(packetSender.Send())
     {
-        size_t sent_size = send(socket, response_payload.data + total_sent, response_payload.size - total_sent, MSG_DONTWAIT);
-        if (sent_size < 0)
-        {
-            if (errno != EAGAIN && errno != EWOULDBLOCK)
-            {
-                Error("ERROR write");
-            }
-            break; // nothing left to send
-        }
-        else
-        {
-            total_sent += sent_size;
-        }
-        printf("Server: Sent %d bytes\n", sent_size);
+        printf("Server: Sent %zu bytes\n", response_payload.size);
+    }
+    else
+    {
+        printf("Server: Failed packet sender\n");
+        return;
     }
 
     free(buffer);

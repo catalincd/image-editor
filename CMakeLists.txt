@@ -10,6 +10,8 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 file(GLOB server_src
     "src/server/server.cpp"
+    "src/utils/packets/*.h"
+    "src/utils/packets/*.cpp"
     "src/utils/*.h"
     "src/utils/*.cpp"
     "src/server/*/*.h"
@@ -23,6 +25,8 @@ target_link_libraries(server ${OpenCV_LIBS} Crow::Crow)
 # Client
 file(GLOB client_src
     "src/client/client.cpp"
+    "src/utils/packets/*.h"
+    "src/utils/packets/*.cpp"
     "src/utils/*.h"
     "src/utils/*.cpp"
     "src/client/*/*.h"
