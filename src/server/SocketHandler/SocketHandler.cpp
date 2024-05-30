@@ -7,6 +7,7 @@
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/un.h>
 
 #include "SocketHandler.h"
 #include "../ThreadHandler/ThreadHandler.h"
@@ -43,6 +44,10 @@ void SocketHandler::SetupConnection(int port, int clients)
     if (m_socket < 0)
         Error("ERROR opening socket");
 
+    m_unix_socket = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (m_unix_socket < 0)
+        Error("ERROR opening unix socket");
+
     int optval = 1;
     setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
@@ -50,10 +55,23 @@ void SocketHandler::SetupConnection(int port, int clients)
     m_serv_addr.sin_addr.s_addr = INADDR_ANY;
     m_serv_addr.sin_port = htons(m_port);
 
+    m_admn_addr.sun_family = AF_UNIX;
+    strncpy(m_admn_addr.sun_path, "/tmp/unix_socket", sizeof(m_admn_addr.sun_path) - 1);
+    unlink(m_admn_addr.sun_path);
+
     if (bind(m_socket, (const sockaddr *)&m_serv_addr, sizeof(m_serv_addr)) < 0)
         Error("ERROR on binding");
 
+    if (bind(m_unix_socket, (struct sockaddr *)&m_admn_addr, sizeof(m_admn_addr)) < 0)
+        Error("ERROR on binding unix");
+
     listen(m_socket, m_clients);
+    listen(m_unix_socket, 1);
+
+    ThreadHandler thr_pool(thread::hardware_concurrency());
+
+    thr_pool.enqueue([=]
+                     { ConnectionHandler::HandleAdminConnection(m_unix_socket); });
 
     int epoll_fd = epoll_create1(0);
     if (epoll_fd == -1)
@@ -71,8 +89,6 @@ void SocketHandler::SetupConnection(int port, int clients)
 
     // printf("Started listening on port %d\n", m_port);
     // printf("Max clients %d\n", m_clients);
-
-    ThreadHandler thr_pool(thread::hardware_concurrency());
 
     std::vector<struct epoll_event> events(4);
 
@@ -118,8 +134,8 @@ void SocketHandler::SetupConnection(int port, int clients)
                     event.events = EPOLLIN | EPOLLET;
 
                     thr_pool.enqueue([=]
-                                 { ConnectionHandler::HandleConnection(client_socket); });
-                                 
+                                     { ConnectionHandler::HandleConnection(client_socket); });
+
                     // if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_socket, &event) == -1)
                     // {
                     //     perror("ERROR adding client socket to epoll");
@@ -128,7 +144,7 @@ void SocketHandler::SetupConnection(int port, int clients)
                 }
             }
         }
-        //sleep(0.001); // THIS IS MY LAST RESORT
+        // sleep(0.001); // THIS IS MY LAST RESORT
         close(m_socket);
     }
 }

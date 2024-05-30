@@ -35,4 +35,11 @@ file(GLOB client_src
 
 add_executable(client ${client_src})
 
+file(GLOB admin_src
+    "src/admin/admin.cpp"
+    "src/utils/*.h"
+    "src/utils/*.cpp"
+)
+
+add_executable(admin ${admin_src})
 

@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/un.h>
 
 #include "ConnectionHandler.h"
 #include "../ImageEditor/ImageEditor.h"
@@ -73,4 +74,34 @@ void ConnectionHandler::HandleConnection(int socket)
     free(payload.image.data);
     
     close(socket);
+}
+
+void ConnectionHandler::HandleAdminConnection(int socket)
+{
+    struct sockaddr_un unix_addr;
+    socklen_t addr_len = sizeof(unix_addr);
+
+    int unix_con = accept(socket, (struct sockaddr*) &unix_addr, &addr_len);
+    if (unix_con < 0)
+        Error("ERROR on accept");
+
+    char *buffer = (char *)malloc(MAX_PAYLOAD);
+    ssize_t buffer_size = read(unix_con, buffer, MAX_PAYLOAD);
+    if (buffer_size < 0)
+        Error("ERROR on read");
+    
+    if (strcmp(buffer, "1") == 0)
+    {
+        const char *response = "The server will be closed";
+        send(unix_con, response, strlen(response), 0);
+        printf("THE ADMIN KILLED THE SERVER ALEGIDLYDLY I HAVAE DYSLEXIA");
+        exit(0);
+    }
+    else
+    {
+        const char *response = "Have a nice day :)";
+        send(unix_con, response, strlen(response), 0);
+    }
+
+    close(unix_con);
 }
