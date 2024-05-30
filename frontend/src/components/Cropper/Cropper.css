@@ -38,6 +38,10 @@ img {
   margin-top: 10px;
 }
 
+.controlsIcon button {
+  margin-right: 10px; 
+}
+
 .icon {
   font-size: 24px;
   cursor: pointer;

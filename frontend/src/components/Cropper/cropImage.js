@@ -73,9 +73,9 @@ export async function canvasPreview(image, crop, scale = 1, rotate = 0) {
 
       var link = document.createElement('a');
       link.href = blobUrl;
-      link.download = 'cropped-image.jpg';
+      link.download = 'cropped-image.png';
 
       link.click();
-    }, 'image/jpeg');
+    }, 'image/png');
   });
 }

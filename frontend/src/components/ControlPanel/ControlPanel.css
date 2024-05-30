@@ -35,6 +35,10 @@
   max-width: 100%;
 }
 
+.download-controls a {
+  text-decoration: none;
+}
+
 @media (max-width: 600px) {
   .control-panel {
     padding: 5px;

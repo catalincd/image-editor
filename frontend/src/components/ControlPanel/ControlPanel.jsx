@@ -79,6 +79,14 @@ function ControlPanel({ type, handleCrop, }) {
             <button onClick={handleCrop}>Crop</button>
           </div>
         );
+      case 'download':
+        return (
+          <div className="download-controls">
+            <a href={image} download="edited-image.png">
+              <button>Download</button>
+            </a>
+          </div>
+        );
       case 'reset':
         return (
           <div className="reset-controls">

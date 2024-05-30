@@ -11,6 +11,7 @@ function Toolbar( {handleCrop} ) {
       <ControlPanel type="blur" />
       <ControlPanel type="rotate" />
       <ControlPanel type="crop" handleCrop={handleCrop} />
+      <ControlPanel type="download" />
       <ControlPanel type="reset" />
     </div>
   );
