@@ -1,4 +1,6 @@
 #include <thread>
+#include "../../utils/types.h"
+#include <vector>
 
 class WebServer
 {
@@ -8,4 +10,6 @@ public:
 
     void Start();
     void Join();
+
+    static std::vector<char> DecodeByte64(const std::string&);
 };

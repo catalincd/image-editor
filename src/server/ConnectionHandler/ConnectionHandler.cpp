@@ -12,8 +12,8 @@
 #include "../ImageEditor/ImageEditor.h"
 #include "../../utils/OSUtils.h"
 
-#include "../../utils/packets/PacketReceiver.h"
 #include "../../utils/packets/PacketSender.h"
+#include "../../utils/packets/PacketReceiver.h"
 
 void SwapBytes(void *pv, size_t n)
 {
@@ -38,40 +38,39 @@ extern size_t MAX_PAYLOAD;
 
 void ConnectionHandler::HandleConnection(int socket)
 {
-    PacketReceiver packetReceiver(socket);
-    Buffer received_buffer;
+    Buffer receivedBuffer;
 
+    PacketReceiver packetReceiver(socket);
     if(packetReceiver.Receive())
     {
-        received_buffer = packetReceiver.GetBuffer();
-        printf("Server: Received %d bytes\n", received_buffer.size);
+        receivedBuffer = packetReceiver.GetBuffer();
+        std::cout << "Received " << receivedBuffer.size << "B" << std::endl;
     }
     else
     {
-        printf("Server: Failed receiver");
+        std::cerr << "FAILED packetReceiver" << std::endl;
         return;
     }
-    
-    Payload payload = BytesToPayload(received_buffer);
+
+
+    Payload payload = BytesToPayload(receivedBuffer);
     payload.image = ImageEditor::Instance().Edit(payload); // delete old image so we don't leak mem? nah overrated
     Buffer response_payload = PayloadToBytes(payload);
     // TODO: HANDLE BIZONIC ERRORS
     printf("Server: Edited image %d bytes\n", payload.image.size);
 
-
-
-    PacketSender packetSender(socket, {response_payload.data, response_payload.size});
+    PacketSender packetSender(socket, response_payload);
 
     if(packetSender.Send())
     {
-        printf("Server: Sent %zu bytes\n", response_payload.size);
+        std::cout << "Sent " << response_payload.size << "B" << std::endl;
     }
     else
     {
-        printf("Server: Failed packet sender\n");
-        return;
+        std::cerr << "FAILED PacketSender" << std::endl;
     }
 
-    free(buffer);
+    free(payload.image.data);
+    
     close(socket);
 }

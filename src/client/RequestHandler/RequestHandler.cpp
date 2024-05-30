@@ -1,5 +1,8 @@
 #include "RequestHandler.h"
 
+#include "../../utils/packets/PacketSender.h"
+#include "../../utils/packets/PacketReceiver.h"
+
 RequestHandler &RequestHandler::Instance()
 {
     static RequestHandler instance;
@@ -24,35 +27,35 @@ void RequestHandler::SendRequest(Payload payload)
 
     printf("Connected to %s:%d\n", "127.0.0.1", 9090);
 
-    // send(m_socket, bytes.data, bytes.size, 0);
+    
     PacketSender packetSender(m_socket, bytes);
 
     if(packetSender.Send())
     {
-        printf("Sent %zu bytes\n", bytes.size);
+        std::cout << "Sent " << bytes.size << "B" << std::endl;
     }
     else
     {
-        printf("Failed packet sender\n");
+        std::cerr << "FAILED PacketSender" << std::endl;
         return;
     }
 
-
+    Payload received_payload;
     PacketReceiver packetReceiver(m_socket);
-    Buffer received_buffer;
+
 
     if(packetReceiver.Receive())
     {
-        received_buffer = packetReceiver.GetBuffer();
-        printf("Received %d bytes\n", received_buffer.size);
+        Buffer receivedBuffer = packetReceiver.GetBuffer();
+        received_payload = BytesToPayload(receivedBuffer);
+        std::cout << "Received " << receivedBuffer.size << "B" << std::endl;
     }
     else
     {
-        printf("Failed receiver");
-        return;
+        std::cerr << "FAILED packetReceiver" << std::endl;
     }
 
-    Payload received_payload = BytesToPayload(received_buffer);
+
 
     ImageHandler::Instance().Write(received_payload.target, received_payload.image);
     printf("Written image\n");

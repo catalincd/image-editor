@@ -4,6 +4,8 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 
+import { ImageContext } from "./ImageContext"
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

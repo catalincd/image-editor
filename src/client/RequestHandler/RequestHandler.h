@@ -13,12 +13,11 @@
 #include <vector>
 #include <getopt.h>
 #include <arpa/inet.h>
+#include "../../utils/types.h"
 #include "../ArgumentParser/ArgumentParser.h"
 #include "../ImageHandler/ImageHandler.h"
 #include "../../utils/types.h"
 #include "../../utils/OSUtils.h"
-#include "../../utils/packets/PacketReceiver.h"
-#include "../../utils/packets/PacketSender.h"
 
 class RequestHandler 
 {

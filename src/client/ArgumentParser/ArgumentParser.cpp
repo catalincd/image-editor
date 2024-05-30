@@ -14,7 +14,11 @@ char* ArgumentParser::GetOutputFile()
 static struct option arg_options[] = {
     {"image", required_argument, 0, 'i'},
     {"resize", required_argument, 0, 'r'},
+    {"angle", required_argument, 0, 'a'},
+    {"crop", required_argument, 0, 'c'},
     {"brightness", required_argument, 0, 'b'},
+    {"contrast", required_argument, 0, 'q'},
+    {"gaussian", required_argument, 0, 'g'},
     {"output", required_argument, 0, 'o'},
     {0, 0, 0, 0}
 };
@@ -43,6 +47,27 @@ Payload ArgumentParser::HandleArguments(int argc, char** argv)
             case 'r':
                 _payload.resize = true;
                 _payload.size = str_to_v2(optarg);
+                break;
+            
+            case 'a':
+                _payload.rotate = true;
+                _payload.angle = atof(optarg);
+                break;
+
+            case 'c':
+                _payload.crop = true;
+                _payload.cropTop = str_to_v2_offset(optarg, 0);
+                _payload.cropSize = str_to_v2_offset(optarg, 2);
+                break;
+            
+            case 'g':
+                _payload.blur = true;
+                _payload.contrast = atof(optarg);
+                break;
+
+            case 'q':
+                _payload.recontrast = true;
+                _payload.contrast = atof(optarg);
                 break;
             
             case 'b':

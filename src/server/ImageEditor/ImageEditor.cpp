@@ -18,6 +18,14 @@ Buffer ImageEditor::Edit(Payload payload)
         image = Filters::Instance().Resize(image, payload.size);
     if (payload.rebright)
         image = Filters::Instance().Rebright(image, payload.brightness);
+    if (payload.recontrast)
+        image = Filters::Instance().Recontrast(image, payload.contrast);
+    if (payload.blur)
+        image = Filters::Instance().Blur(image, payload.kernel);
+    if (payload.rotate)
+        image = Filters::Instance().Rotate(image, payload.angle);
+    if (payload.crop)
+        image = Filters::Instance().Crop(image, payload.cropTop, payload.cropSize);
 
     std::vector<unsigned char> buffer(MAX_IMAGE);
     imencode(GetFileExtension(payload.target), image, buffer);
