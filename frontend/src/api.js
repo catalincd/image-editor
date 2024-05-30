@@ -1,8 +1,3 @@
-import axios from 'axios';
-
-const BASE_URL = 'http://0.0.0.0:18080';
-
-
 var targetOld = null;
 
 
@@ -13,7 +8,7 @@ export const processImage = async (image, setImage, configs) => {
     console.log(configs)
 
     var target = "x." + image.substr(11, 4)
-    if (target[target.length - 1] == ';')
+    if (target[target.length - 1] === ';')
       target = target.substring(0, target.length - 1);
 
     targetOld = targetOld || target

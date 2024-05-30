@@ -7,9 +7,11 @@ function Toolbar( {handleCrop} ) {
     <div className="toolbar">
       <ControlPanel type="resize" />
       <ControlPanel type="brightness" />
+      <ControlPanel type="contrast" />
       <ControlPanel type="blur" />
       <ControlPanel type="rotate" />
       <ControlPanel type="crop" handleCrop={handleCrop} />
+      <ControlPanel type="reset" />
     </div>
   );
 }

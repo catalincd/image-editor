@@ -3,14 +3,11 @@ import { useState, useRef, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { BsFillCloudDownloadFill } from 'react-icons/bs';
-import { AiOutlineRotateRight } from 'react-icons/ai';
 import { canvasPreview } from './cropImage';
-import { processImage } from '../../api';
 
-export default function Cropper({ url, onCancelCrop }) { // Added onCancelCrop prop for cancel button
+export default function Cropper({ url, onCancelCrop }) {
   const imgRef = useRef(null);
   const [crop, setCrop] = useState(null);
-  const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
   const [height, setHeight] = useState('');
   const [width, setWidth] = useState('');
@@ -25,16 +22,8 @@ export default function Cropper({ url, onCancelCrop }) { // Added onCancelCrop p
     setScale(parseFloat(e));
   };
 
-  const rotateRight = () => {
-    let newRotation = rotation + 90;
-    if (newRotation >= 360) {
-      newRotation = -360;
-    }
-    setRotation(newRotation);
-  };
-
   const download = async () => {
-    await canvasPreview(imgRef.current, completedCrop, scale, rotation);
+    await canvasPreview(imgRef.current, completedCrop, scale);
     // if (!completedCrop || !imgRef.current) {
     //   return;
     // }
@@ -98,7 +87,7 @@ export default function Cropper({ url, onCancelCrop }) { // Added onCancelCrop p
             crossorigin='anonymous'
             alt='Error'
             src={imageSrc}
-            style={{ transform: `scale(${scale}) rotate(${rotation}deg)` }}
+            style={{ transform: `scale(${scale})` }}
             onLoad={onImageLoad}
           />
         </ReactCrop>
@@ -119,7 +108,6 @@ export default function Cropper({ url, onCancelCrop }) { // Added onCancelCrop p
       </div>
       <div className={'controlsIcon'}>
         <BsFillCloudDownloadFill className={'icon'} onClick={download} />
-        <AiOutlineRotateRight className={'icon'} onClick={rotateRight} />
         <button onClick={onCancelCrop} className="btn btn-primary">Cancel Crop</button>
       </div>
     </div>

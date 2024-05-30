@@ -5,7 +5,7 @@ import { processImage } from '../../api'
 
 import { ImageContext } from "../../ImageContext"
 
-function ControlPanel({ type, handleCrop }) {
+function ControlPanel({ type, handleCrop, }) {
 
   const { image, setImage } = useContext(ImageContext);
 
@@ -15,28 +15,13 @@ function ControlPanel({ type, handleCrop }) {
   const [contrast, setContrast] = useState(2);
   const [blur, setBlur] = useState(0);
   const [rotation, setRotation] = useState(0);
-
-  /*
-  useEffect(() => {
-    processImage(image, setImage, { angle: rotation })
-  }, [rotation])
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    processImage(image, setImage, { blur })
-  }, [blur])
-
-  useEffect(() => {
-    processImage(image, setImage, { contrast })
-  }, [contrast])
-
-  useEffect(() => {
-    processImage(image, setImage, { brightness })
-  }, [brightness])
-
-  useEffect(() => {
-    processImage(image, setImage, { size: { width, height } })
-  }, [width, height])
-  */
+    if (image) {
+      setHistory(history => [...history, image]);
+    }
+  }, [image]);
 
   const renderControl = () => {
     switch (type) {
@@ -50,7 +35,6 @@ function ControlPanel({ type, handleCrop }) {
               <input type="number" value={height} onChange={e => setHeight(parseInt(e.target.value))} />
             </label>
             <button onClick={() => processImage(image, setImage, { size: { width, height } })}>Apply</button>
-            {/* <button onClick={applySettings}>Apply</button> */}
           </div>
         );
       case 'brightness':
@@ -60,7 +44,6 @@ function ControlPanel({ type, handleCrop }) {
               <input type="range" min="0" max="200" value={brightness} onChange={e => setBrightness(parseInt(e.target.value))} />
             </label>
             <button onClick={() => processImage(image, setImage, { brightness })}>Apply</button>
-            {/* <button onClick={applySettings}>Apply</button> */}
           </div>
         );
       case 'contrast':
@@ -70,7 +53,6 @@ function ControlPanel({ type, handleCrop }) {
               <input type="range" min="0" max="200" value={contrast} onChange={e => setContrast(parseInt(e.target.value))} />
             </label>
             <button onClick={() => processImage(image, setImage, { contrast })}>Apply</button>
-            {/* <button onClick={applySettings}>Apply</button> */}
           </div>
         );
       case 'blur':
@@ -80,7 +62,6 @@ function ControlPanel({ type, handleCrop }) {
               <input type="range" min="0" max="10" value={blur} onChange={e => setBlur(parseFloat(e.target.value))} />
             </label>
             <button onClick={() => processImage(image, setImage, { blur })}>Apply</button>
-            {/* <button onClick={applySettings}>Apply</button> */}
           </div>
         );
       case 'rotate':
@@ -90,13 +71,18 @@ function ControlPanel({ type, handleCrop }) {
               <input type="number" value={rotation} onChange={e => setRotation(parseInt(e.target.value))} />
             </label>
             <button onClick={() => processImage(image, setImage, { angle: rotation })}>Apply</button>
-            {/* <button onClick={applySettings}>Apply</button> */}
           </div>
         );
       case 'crop':
         return (
           <div className="crop-controls">
             <button onClick={handleCrop}>Crop</button>
+          </div>
+        );
+      case 'reset':
+        return (
+          <div className="reset-controls">
+            <button onClick={() => setImage(history[history.length-2])}>Reset</button>
           </div>
         );
       default:
