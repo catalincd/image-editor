@@ -20,7 +20,7 @@ void RequestHandler::SendRequest(Payload payload)
 
     m_serv_addr.sin_family = AF_INET;
     m_serv_addr.sin_port = htons(9090);                     // TO DO: add this as function param read from arguments
-    inet_pton(AF_INET, "127.0.0.1", &m_serv_addr.sin_addr); // TO DO: add this as function param read from arguments
+    inet_pton(AF_INET, strlen(payload.server) > 0? payload.server : "127.0.0.1", &m_serv_addr.sin_addr); // TO DO: add this as function param read from arguments
 
     if (connect(m_socket, (struct sockaddr *)&m_serv_addr, sizeof(m_serv_addr)) < 0)
         Error("Failed to connect");

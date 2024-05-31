@@ -13,6 +13,7 @@ struct Buffer {         // maybe add on destroy (eventually)
 // TO DO: modify this, add more stuff to it or something
 struct Payload {
     char target[255];
+    char server[255];
 
     bool resize = false;
     vector2 size;

@@ -12,6 +12,7 @@ char* ArgumentParser::GetOutputFile()
 }
 
 static struct option arg_options[] = {
+    {"server", required_argument, 0, 's'},
     {"image", required_argument, 0, 'i'},
     {"resize", required_argument, 0, 'r'},
     {"angle", required_argument, 0, 'a'},
@@ -27,7 +28,7 @@ Payload ArgumentParser::HandleArguments(int argc, char** argv)
 {
     int argument = 0;
     int option_index = 0;
-    outfile = (char*)malloc(255); /// free this
+    // outfile = (char*)malloc(255); /// free this
     
     Payload _payload;
 
@@ -40,8 +41,11 @@ Payload ArgumentParser::HandleArguments(int argc, char** argv)
                 break;
 
             case 'o':
-                strcpy(outfile, optarg);
                 strcpy(_payload.target, optarg);
+                break;
+            
+            case 's':
+                strcpy(_payload.server, optarg);
                 break;
             
             case 'r':
